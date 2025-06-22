@@ -1,0 +1,321 @@
+STUDIO SCHEDULE WEBSITE - PRESENTASI PROJECT
+============================================
+
+NAMA PROJECT: Studio Schedule Management System
+TEKNOLOGI: Next.js 15 + React 19 + TypeScript + Supabase + Tailwind CSS
+
+============================================
+1. LATAR BELAKANG & TUJUAN
+============================================
+
+MASALAH:
+- Studio fotografi perlu sistem booking yang terorganisir
+- Admin kesulitan mengatur jadwal secara manual
+- User tidak tahu slot waktu yang tersedia
+- Tidak ada sistem digital untuk manajemen studio
+
+SOLUSI:
+- Website booking studio dengan sistem admin dan user
+- Admin bisa mengatur jadwal dengan mudah
+- User bisa melihat slot yang tersedia
+- Sistem digital yang terintegrasi
+
+============================================
+2. FITUR UTAMA
+============================================
+
+A. SISTEM AUTHENTICATION:
+- Login/Register user biasa
+- Login admin terpisah
+- Role-based access control
+- Auto-redirect berdasarkan role
+
+B. ADMIN DASHBOARD:
+- Manage schedules (Add, Edit, Delete)
+- View statistik booking
+- Modal interface yang user-friendly
+- Real-time data sync
+
+C. USER DASHBOARD:
+- View semua jadwal studio
+- Filter berdasarkan status (Available/Booked)
+- Statistik slot tersedia
+- Refresh data real-time
+
+============================================
+3. ARSITEKTUR SISTEM
+============================================
+
+FRONTEND:
+- Next.js 15 (React Framework)
+- TypeScript (Type Safety)
+- Tailwind CSS (Styling)
+- Responsive Design
+
+BACKEND:
+- Supabase (Database + Auth)
+- PostgreSQL Database
+- Row Level Security (RLS)
+- Real-time subscriptions
+
+DATABASE TABLES:
+- profiles (user data + roles)
+- schedules (jadwal studio)
+
+============================================
+4. INTEGRASI SUPABASE - DETAILED
+============================================
+
+A. SUPABASE SETUP:
+- Project URL: https://wlbaiwoaolergpptysac.supabase.co
+- Database: PostgreSQL dengan RLS (Row Level Security)
+- Authentication: Built-in Supabase Auth
+- Real-time: Live data synchronization
+
+B. TABEL DATABASE & RELASI:
+
+1. TABEL 'profiles':
+   - id (UUID, Primary Key, Foreign Key ke auth.users)
+   - email (TEXT, Unique)
+   - name (TEXT)
+   - role (TEXT: 'user' atau 'admin')
+   - created_at (TIMESTAMP)
+   - updated_at (TIMESTAMP)
+
+2. TABEL 'schedules':
+   - id (UUID, Primary Key)
+   - user_id (UUID, Foreign Key ke profiles, NULL untuk admin-created)
+   - date (DATE, NOT NULL)
+   - time_slot (TEXT, NOT NULL)
+   - status (TEXT: 'available', 'booked', 'cancelled')
+   - created_at (TIMESTAMP)
+   - updated_at (TIMESTAMP)
+
+C. RELASI ANTAR TABEL:
+- profiles.id ↔ auth.users.id (One-to-One)
+- profiles.id ↔ schedules.user_id (One-to-Many, Optional)
+- Admin-created schedules: user_id = NULL
+- User-booked schedules: user_id = user's profile ID
+
+D. ROW LEVEL SECURITY (RLS) POLICIES:
+
+1. PROFILES TABLE:
+   - Users can view their own profile
+   - Users can update their own profile
+   - Users can insert their own profile
+
+2. SCHEDULES TABLE:
+   - Users can view all schedules (SELECT)
+   - Users can book schedules (UPDATE where user_id matches)
+   - Admins can manage all schedules (ALL operations)
+   - Admins can insert schedules without user_id
+
+E. TRIGGERS & FUNCTIONS:
+- handle_new_user(): Auto-create profile saat user register
+- on_auth_user_created: Trigger yang menjalankan function
+- Auto-set role = 'user' untuk user baru
+
+============================================
+5. ALUR AUTHENTICATION & LOGIN
+============================================
+
+A. USER REGISTRATION FLOW:
+1. User klik "Sign up" di /login
+2. Input email, password, name
+3. Supabase Auth membuat user di auth.users
+4. Trigger on_auth_user_created terpicu
+5. Function handle_new_user() dijalankan
+6. Profile otomatis dibuat di tabel profiles
+7. Role default = 'user'
+8. User diarahkan ke /dashboard
+
+B. USER LOGIN FLOW:
+1. User input email & password di /login
+2. Supabase Auth verifikasi credentials
+3. Jika berhasil, session dibuat
+4. AuthContext mengambil user data dari profiles
+5. Cek role user (user/admin)
+6. Redirect berdasarkan role:
+   - user → /dashboard
+   - admin → /admin/dashboard
+
+C. ADMIN LOGIN FLOW:
+1. Admin input email & password di /admin/login
+2. Supabase Auth verifikasi credentials
+3. AuthContext mengambil user data dari profiles
+4. Cek role = 'admin'
+5. Jika admin → /admin/dashboard
+6. Jika bukan admin → /dashboard
+
+D. SESSION MANAGEMENT:
+- Session disimpan di localStorage
+- Auto-refresh token
+- Logout: clear session + redirect
+
+============================================
+6. DATA FLOW & REAL-TIME SYNC
+============================================
+
+A. ADMIN MENAMBAH SCHEDULE:
+1. Admin login → /admin/dashboard
+2. Klik "Manage Schedules"
+3. Input date, time_slot, status
+4. Supabase insert ke tabel schedules
+5. user_id = NULL (admin-created)
+6. Data tersimpan di PostgreSQL
+7. Real-time update ke semua connected clients
+
+B. USER VIEW SCHEDULES:
+1. User login → /dashboard
+2. useEffect() fetch schedules dari Supabase
+3. Query: SELECT * FROM schedules ORDER BY date
+4. Data ditampilkan di tabel
+5. Refresh button untuk update manual
+
+C. REAL-TIME FEATURES:
+- Supabase real-time subscriptions
+- Live data sync antara admin dan user
+- Instant updates tanpa refresh page
+- Optimistic UI updates
+
+============================================
+7. ALUR KERJA SISTEM
+============================================
+
+ADMIN FLOW:
+1. Login di /admin/login
+2. Akses dashboard admin
+3. Klik "Manage Schedules"
+4. Tambah/edit/hapus jadwal
+5. Data tersimpan di database
+
+USER FLOW:
+1. Login di /login
+2. Lihat dashboard user
+3. View semua jadwal studio
+4. Lihat slot yang tersedia
+5. Refresh untuk data terbaru
+
+============================================
+8. KEUNGGULAN SISTEM
+============================================
+
+✅ Modern UI/UX dengan Tailwind CSS
+✅ Responsive design (mobile & desktop)
+✅ Real-time data synchronization
+✅ Secure authentication dengan Supabase
+✅ Role-based access control
+✅ Type-safe dengan TypeScript
+✅ Easy to maintain dan scale
+✅ Database yang terstruktur dengan baik
+✅ Row Level Security untuk keamanan data
+✅ Auto-profile creation untuk user baru
+✅ Real-time subscriptions untuk live updates
+
+============================================
+9. DEMO APLIKASI
+============================================
+
+LIVE DEMO:
+- URL: http://localhost:3000
+- Admin Login: /admin/login
+- User Login: /login
+
+TESTING SCENARIOS:
+1. Register user baru
+2. Login sebagai admin
+3. Tambah jadwal studio
+4. Login sebagai user
+5. Lihat jadwal yang ditambahkan admin
+
+============================================
+10. CHALLENGES & SOLUTIONS
+============================================
+
+CHALLENGE 1: Database Integration
+- Masalah: Schedule tidak tersimpan permanen
+- Solusi: Integrasi Supabase dengan proper RLS policies
+
+CHALLENGE 2: Role Management
+- Masalah: Admin dan user akses terpisah
+- Solusi: Role-based routing dan authentication
+
+CHALLENGE 3: Real-time Updates
+- Masalah: Data tidak sync antara admin dan user
+- Solusi: Supabase real-time subscriptions
+
+CHALLENGE 4: Profile Auto-Creation
+- Masalah: User register tapi tidak ada profile
+- Solusi: Trigger dan function handle_new_user()
+
+CHALLENGE 5: Admin Schedule Creation
+- Masalah: user_id required tapi admin tidak punya user_id
+- Solusi: Allow NULL user_id untuk admin-created schedules
+
+============================================
+11. FUTURE ENHANCEMENTS
+============================================
+
+PLANNED FEATURES:
+- Booking system untuk user
+- Email notifications
+- Calendar view
+- Payment integration
+- Mobile app
+- Analytics dashboard
+
+============================================
+12. KESIMPULAN
+============================================
+
+PROJECT INI BERHASIL:
+✅ Membuat sistem booking studio yang fungsional
+✅ Implementasi authentication yang aman
+✅ UI/UX yang modern dan user-friendly
+✅ Database yang terstruktur dengan baik
+✅ Real-time data synchronization
+✅ Integrasi Supabase yang solid
+✅ Row Level Security untuk keamanan
+✅ Auto-profile management
+
+NILAI TAMBAH:
+- Efisiensi manajemen studio
+- User experience yang lebih baik
+- Sistem digital yang scalable
+- Teknologi modern dan maintainable
+- Keamanan data yang terjamin
+- Real-time collaboration
+
+============================================
+13. Q&A
+============================================
+
+PERTANYAAN YANG MUNGKIN DITANYAKAN:
+
+Q: Kenapa pilih Next.js?
+A: Modern, fast, SEO-friendly, great developer experience
+
+Q: Kenapa pilih Supabase?
+A: Easy setup, built-in auth, real-time features, PostgreSQL
+
+Q: Bagaimana security?
+A: Row Level Security, role-based access, secure authentication
+
+Q: Apakah scalable?
+A: Ya, bisa ditambah fitur booking, payment, notifications
+
+Q: Bagaimana relasi database?
+A: profiles ↔ auth.users (1:1), profiles ↔ schedules (1:many)
+
+Q: Bagaimana real-time sync?
+A: Supabase real-time subscriptions untuk live updates
+
+Q: Bagaimana auto-profile creation?
+A: Trigger dan function handle_new_user() saat user register
+
+============================================
+THANK YOU!
+============================================
+
+Terima kasih atas perhatiannya!
+Pertanyaan dan saran sangat diharapkan. 

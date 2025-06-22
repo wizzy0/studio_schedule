@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Studio Schedule Website
 
-## Getting Started
+Website jadwal studio menggunakan Next.js dan Supabase untuk manajemen jadwal booking studio.
 
-First, run the development server:
+## Fitur
+
+- ✅ Login/Register user dengan Supabase Auth
+- ✅ Login admin terpisah
+- ✅ Dashboard user dan admin
+- ✅ Manajemen jadwal studio (akan dikembangkan)
+- ✅ UI modern dan responsive
+
+## Setup
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Setup Supabase
+
+1. Buka [Supabase Dashboard](https://supabase.com/dashboard)
+2. Pilih project Anda
+3. Buka SQL Editor
+4. Jalankan script SQL berikut:
+
+```sql
+-- Copy dan paste isi dari file supabase-setup.sql
+```
+
+### 3. Konfigurasi Environment Variables
+
+Buat file `.env.local` di root project:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://wlbaiwoaolergpptysac.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndsYmFpd29hb2xlcmdwcHR5c2FjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MjY2MDksImV4cCI6MjA2NjEwMjYwOX0.V5GDKxRZp5zSB10CmnB0qLNXksW32z5XU14pAYZaQX4
+```
+
+### 4. Jalankan Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka [http://localhost:3000](http://localhost:3000) di browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Struktur Database
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Tabel `profiles`
+- `id` - UUID (foreign key ke auth.users)
+- `email` - TEXT (unique)
+- `name` - TEXT
+- `role` - TEXT ('user' atau 'admin')
+- `created_at` - TIMESTAMP
+- `updated_at` - TIMESTAMP
 
-## Learn More
+### Tabel `schedules`
+- `id` - UUID (primary key)
+- `user_id` - UUID (foreign key ke profiles)
+- `date` - DATE
+- `time_slot` - TEXT
+- `status` - TEXT ('available', 'booked', 'cancelled')
+- `created_at` - TIMESTAMP
+- `updated_at` - TIMESTAMP
 
-To learn more about Next.js, take a look at the following resources:
+## Testing Login
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Buka `http://localhost:3000/login`
+2. Klik "Sign up" untuk membuat akun baru
+3. Masukkan email, password, dan nama
+4. Cek email untuk konfirmasi (jika diperlukan)
+5. Login dengan akun yang sudah dibuat
+6. Akan diarahkan ke dashboard
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Admin Login
 
-## Deploy on Vercel
+1. Buka `http://localhost:3000/admin/login`
+2. Login dengan akun yang memiliki role 'admin'
+3. Akan diarahkan ke admin dashboard
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Troubleshooting
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Error "Table 'profiles' does not exist"
+- Pastikan script SQL di `supabase-setup.sql` sudah dijalankan di Supabase SQL Editor
+
+### Error "Invalid login credentials"
+- Pastikan email dan password benar
+- Cek apakah email sudah dikonfirmasi (untuk sign up baru)
+
+### Error "Network error"
+- Pastikan URL dan API key Supabase sudah benar
+- Cek koneksi internet
+
+## Next Steps
+
+- [ ] Implementasi dashboard admin
+- [ ] CRUD jadwal studio
+- [ ] Booking system
+- [ ] Notifikasi email
+- [ ] Calendar view
+- [ ] Payment integration
