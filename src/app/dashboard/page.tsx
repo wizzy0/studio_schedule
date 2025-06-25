@@ -77,7 +77,7 @@ export default function DashboardPage() {
       if (data && data.length > 0) {
         alert('Booking berhasil!');
       } else {
-        alert('Tidak ada data yang berubah. Cek policy Supabase/RLS.');
+        alert('Tidak ada data yang berubah.');
       }
       fetchSchedules();
     } catch (err) {
