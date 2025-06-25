@@ -59,6 +59,33 @@ export default function DashboardPage() {
     }
   }
 
+  // Tambahkan fungsi untuk booking schedule
+  const handleBookSchedule = async (scheduleId: string) => {
+    if (!user) return;
+    console.log('Booking schedule:', scheduleId, 'for user:', user.id);
+    try {
+      const { data, error } = await supabase
+        .from('schedules')
+        .update({ status: 'booked', user_id: user.id })
+        .eq('id', scheduleId)
+        .select();
+      console.log('Supabase update result:', { data, error });
+      if (error) {
+        alert('Failed to book schedule: ' + error.message + '\nDetails: ' + (error.details || '-') + '\nHint: ' + (error.hint || '-'));
+        return;
+      }
+      if (data && data.length > 0) {
+        alert('Booking berhasil!');
+      } else {
+        alert('Tidak ada data yang berubah. Cek policy Supabase/RLS.');
+      }
+      fetchSchedules();
+    } catch (err) {
+      alert('Unexpected error: ' + err);
+      console.error('Unexpected error:', err);
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 flex items-center justify-center">
@@ -214,8 +241,11 @@ export default function DashboardPage() {
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            {schedule.status === 'available' ? (
-                              <button className="text-blue-600 hover:text-blue-900 font-medium">
+                            {schedule.status === 'available' || schedule.status === 'cancelled' ? (
+                              <button
+                                className="text-blue-600 hover:text-blue-900 font-medium"
+                                onClick={() => handleBookSchedule(schedule.id)}
+                              >
                                 Book Now
                               </button>
                             ) : schedule.status === 'booked' ? (
