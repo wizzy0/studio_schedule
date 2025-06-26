@@ -37,11 +37,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [fetchUserProfile])
 
   async function fetchUserProfile(userId: string) {
     try {
-      // First, check if profiles table exists
       const { error: tableError } = await supabase
         .from('profiles')
         .select('count')
@@ -55,26 +54,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq('id', userId)
         .single()
       if (error) {
-        // If profile doesn't exist, try to create it
         if (error.code === 'PGRST116') {
-          await createMissingProfile(userId)
+          await createMissingProfile()
         }
         return
       }
       setUser(data)
-    } catch (error) {
+    } catch {
       // Tidak perlu log error di produksi
     }
   }
 
-  async function createMissingProfile(userId: string) {
+  async function createMissingProfile() {
     try {
-      // Get user data from auth.users
       const { data: { user }, error: authError } = await supabase.auth.getUser()
       if (authError || !user) {
         return
       }
-      // Create profile manually
       const { data, error } = await supabase
         .from('profiles')
         .insert({
@@ -89,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return
       }
       setUser(data)
-    } catch (error) {
+    } catch {
       // Tidak perlu log error di produksi
     }
   }
@@ -107,7 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error: { message: 'Please check your email to confirm your account before signing in.' } }
       }
       return { error: null }
-    } catch (error) {
+    } catch {
       return { error: { message: 'An unexpected error occurred' } }
     }
   }
@@ -134,7 +130,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
       return { error: null, success: true }
-    } catch (error) {
+    } catch {
       return { error: { message: 'An unexpected error occurred' } }
     }
   }
@@ -146,7 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Tidak perlu log error di produksi
       }
       setUser(null)
-    } catch (error) {
+    } catch {
       // Tidak perlu log error di produksi
     }
   }
