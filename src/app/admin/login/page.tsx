@@ -34,7 +34,10 @@ export default function AdminLoginPage() {
       const result = await signIn(email, password)
 
       if (result.error) {
-        setError(result.error.message)
+        const msg = typeof result.error === 'object' && result.error && 'message' in result.error
+          ? (result.error as { message?: string }).message
+          : 'An error occurred';
+        setError(msg || 'An error occurred');
       } else {
         // The useEffect above will handle the redirect based on user role
         console.log('Login successful, checking admin privileges...')
