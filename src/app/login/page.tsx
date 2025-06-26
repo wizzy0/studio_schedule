@@ -39,7 +39,9 @@ export default function LoginPage() {
           : 'An error occurred';
         setError(msg || 'An error occurred');
       } else if (typeof result === 'object' && result && 'success' in result && result.success && !isLogin) {
-        const msg = 'message' in result ? (result as { message?: string }).message : undefined;
+        const msg = typeof result === 'object' && result && 'message' in result
+          ? (result as { message?: string }).message
+          : undefined;
         setSuccess(msg || 'Account created successfully! Please check your email to confirm your account.');
         setEmail('');
         setPassword('');
