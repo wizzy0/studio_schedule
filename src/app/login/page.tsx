@@ -34,15 +34,17 @@ export default function LoginPage() {
       }
 
       if (result.error) {
-        console.error('Auth error:', result.error)
-        setError(result.error.message || 'An error occurred')
-      } else if (result.success && !isLogin) {
-        setSuccess(result.message || 'Account created successfully! Please check your email to confirm your account.')
-        // Clear form
-        setEmail('')
-        setPassword('')
-        setName('')
-        setIsLogin(true)
+        const msg = typeof result.error === 'object' && result.error && 'message' in result.error
+          ? (result.error as { message?: string }).message
+          : 'An error occurred';
+        setError(msg || 'An error occurred');
+      } else if (typeof result === 'object' && result && 'success' in result && result.success && !isLogin) {
+        const msg = 'message' in result ? (result as { message?: string }).message : undefined;
+        setSuccess(msg || 'Account created successfully! Please check your email to confirm your account.');
+        setEmail('');
+        setPassword('');
+        setName('');
+        setIsLogin(true);
       } else if (isLogin) {
         console.log('Sign in successful, redirecting to dashboard')
         router.push('/dashboard')
