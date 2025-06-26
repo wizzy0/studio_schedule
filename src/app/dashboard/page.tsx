@@ -266,9 +266,9 @@ export default function DashboardPage() {
           <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
             <h3 className="font-semibold text-blue-900 mb-2">Quick Actions:</h3>
             <ul className="text-sm text-blue-800 space-y-1">
-              <li>• Click "Book Now" on any available slot to make a reservation</li>
-              <li>• Use the "Refresh" button to see the latest schedules</li>
-              <li>• Contact the studio admin for any special requests</li>
+              <li>02 Click &quot;Book Now&quot; on any available slot to make a reservation</li>
+              <li>02 Use the &quot;Refresh&quot; button to see the latest schedules</li>
+              <li>02 Contact the studio admin for any special requests</li>
             </ul>
           </div>
         </div>

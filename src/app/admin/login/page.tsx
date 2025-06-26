@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
         // The useEffect above will handle the redirect based on user role
         console.log('Login successful, checking admin privileges...')
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred')
     } finally {
       setLoading(false)

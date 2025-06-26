@@ -11,7 +11,6 @@ export default function AdminDashboardPage() {
   const router = useRouter()
   const [showScheduleModal, setShowScheduleModal] = useState(false)
   const [schedules, setSchedules] = useState<Schedule[]>([])
-  const [loadingSchedules, setLoadingSchedules] = useState(false)
 
   useEffect(() => {
     if (!loading && !user) {
@@ -27,7 +26,6 @@ export default function AdminDashboardPage() {
 
   const fetchSchedules = async () => {
     try {
-      setLoadingSchedules(true)
       console.log('Admin: Fetching schedules from Supabase...')
       
       const { data, error } = await supabase
@@ -50,8 +48,6 @@ export default function AdminDashboardPage() {
       setSchedules(data || [])
     } catch (error) {
       console.error('Unexpected error fetching schedules:', error)
-    } finally {
-      setLoadingSchedules(false)
     }
   }
 
